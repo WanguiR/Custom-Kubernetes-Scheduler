@@ -1,10 +1,13 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus-deployment
   namespace: monitoring
 spec:
   replicas: 1
+  selector : 
+    matchLabels:
+      app: prometheus-server
   template:
     metadata:
       labels:
@@ -13,6 +16,13 @@ spec:
       containers:
         - name: prometheus
           image: prom/prometheus:v2.2.1
+          resources:
+           limits:
+            cpu: 200m   # 200 milliCPU
+            memory: 512Mi  # 512 Megabytes
+           requests:
+            cpu: 100m   # 100 milliCPU
+            memory: 256Mi  # 256 Megabytes
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus/"
